@@ -9,12 +9,12 @@ namespace plantMaterials.Models
     {
         public Tissue()
         {
-            Populations = new HashSet<Population>();
+            PlantSamples = new HashSet<PlantSample>();
         }
 
         public Guid TissueId { get; set; }
         public string TissueName { get; set; }
 
-        public virtual ICollection<Population> Populations { get; set; }
+        public virtual ICollection<PlantSample> PlantSamples { get; set; }
     }
 }

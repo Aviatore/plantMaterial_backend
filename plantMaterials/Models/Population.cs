@@ -16,10 +16,10 @@ namespace plantMaterials.Models
         public string PopulationName { get; set; }
         public string Description { get; set; }
         public Guid? SpeciesId { get; set; }
-        public Guid? TissueId { get; set; }
+        public Guid? LocationId { get; set; }
 
+        public virtual Location Location { get; set; }
         public virtual Species Species { get; set; }
-        public virtual Tissue Tissue { get; set; }
         public virtual ICollection<PlantSample> PlantSamples { get; set; }
     }
 }

@@ -19,6 +19,7 @@ namespace plantMaterials.Models
 
         public virtual DbSet<Analysis> Analyses { get; set; }
         public virtual DbSet<AnalysisType> AnalysisTypes { get; set; }
+        public virtual DbSet<Location> Locations { get; set; }
         public virtual DbSet<PlantSample> PlantSamples { get; set; }
         public virtual DbSet<Population> Populations { get; set; }
         public virtual DbSet<Species> Species { get; set; }
@@ -97,6 +98,32 @@ namespace plantMaterials.Models
                     .HasColumnName("analysis_type_name");
             });
 
+            modelBuilder.Entity<Location>(entity =>
+            {
+                entity.HasKey(e => e.LocationId)
+                    .HasName("locations_pk")
+                    .IsClustered(false);
+
+                entity.ToTable("locations");
+
+                entity.HasIndex(e => e.LocationId, "locations_location_id_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.LocationId)
+                    .HasColumnName("location_id")
+                    .HasDefaultValueSql("(newsequentialid())");
+
+                entity.Property(e => e.LocationName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("location_name");
+
+                entity.Property(e => e.ShelfPosition)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("shelf_position");
+            });
+
             modelBuilder.Entity<PlantSample>(entity =>
             {
                 entity.HasKey(e => e.PlantSampleId)
@@ -128,11 +155,19 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.PopulationId).HasColumnName("population_id");
 
+                entity.Property(e => e.TissueId).HasColumnName("tissue_id");
+
                 entity.HasOne(d => d.Population)
                     .WithMany(p => p.PlantSamples)
                     .HasForeignKey(d => d.PopulationId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("plant_samples_population__fk");
+
+                entity.HasOne(d => d.Tissue)
+                    .WithMany(p => p.PlantSamples)
+                    .HasForeignKey(d => d.TissueId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("plant_samples_tissue__fk");
             });
 
             modelBuilder.Entity<Population>(entity =>
@@ -154,6 +189,8 @@ namespace plantMaterials.Models
                     .IsUnicode(false)
                     .HasColumnName("description");
 
+                entity.Property(e => e.LocationId).HasColumnName("location_id");
+
                 entity.Property(e => e.PopulationName)
                     .HasMaxLength(100)
                     .IsUnicode(false)
@@ -161,19 +198,17 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.SpeciesId).HasColumnName("species_id");
 
-                entity.Property(e => e.TissueId).HasColumnName("tissue_id");
+                entity.HasOne(d => d.Location)
+                    .WithMany(p => p.Populations)
+                    .HasForeignKey(d => d.LocationId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("populations_location__fk");
 
                 entity.HasOne(d => d.Species)
                     .WithMany(p => p.Populations)
                     .HasForeignKey(d => d.SpeciesId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("populations_species__fk");
-
-                entity.HasOne(d => d.Tissue)
-                    .WithMany(p => p.Populations)
-                    .HasForeignKey(d => d.TissueId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("populations_tissue__fk");
             });
 
             modelBuilder.Entity<Species>(entity =>
