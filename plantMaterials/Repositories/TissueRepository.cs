@@ -105,5 +105,49 @@ namespace plantMaterials.Repositories
                 return problemDetails;
             }
         }
+
+        public async Task<ProblemDetails> EditTissueName(string id, string newTissueName)
+        {
+            ProblemDetails problemDetails = new ProblemDetails()
+            {
+                Detail = "Something went wrong during editing tissue name",
+                Status = 500
+            };
+
+            try
+            {
+                Guid tissueId;
+                if (!Guid.TryParse(id, out tissueId))
+                {
+                    throw new Exception("Tissue Id is in wrong format");
+                }
+
+                if (newTissueName is null)
+                {
+                    throw new Exception("Tissue name cannot be empty");
+                }
+
+                var editedTissue = await _dbContext.Tissues.SingleOrDefaultAsync(p => p.TissueId == tissueId);
+
+                if (editedTissue is null)
+                {
+                    throw new Exception("Could not find a tissue of the specified Id");
+                }
+                
+                editedTissue.TissueName = newTissueName;
+
+                await _dbContext.SaveChangesAsync();
+
+                problemDetails.Detail = "Tissue name changed successfully";
+                problemDetails.Status = 200;
+
+                return problemDetails;
+            }
+            catch (Exception e)
+            {
+                problemDetails.Detail = e.Message;
+                return problemDetails;
+            }
+        }
     }
 }

@@ -10,5 +10,6 @@ namespace plantMaterials.Repositories
         IEnumerable<Tissue> GetAllTissues();
         Task<ProblemDetails> AddTissue(string tissueName);
         Task<ProblemDetails> RemoveTissue(string tissueId);
+        Task<ProblemDetails> EditTissueName(string id, string newTissueName);
     }
 }

@@ -16,7 +16,7 @@ namespace plantMaterials.Controllers
         }
         
         [HttpGet("tissues")]
-        public IActionResult Index()
+        public IActionResult ShowAllTissues()
         {
             try
             {
@@ -41,6 +41,14 @@ namespace plantMaterials.Controllers
         public async Task<IActionResult> RemoveTissue(string tissueId)
         {
             var result = await _uow.TissueRepository.RemoveTissue(tissueId);
+
+            return Ok(result);
+        }
+
+        [HttpPut("tissue/edit/{tissueId}/{newTissueName}")]
+        public async Task<IActionResult> EditTissue(string tissueId, string newTissueName)
+        {
+            var result = await _uow.TissueRepository.EditTissueName(tissueId, newTissueName);
 
             return Ok(result);
         }

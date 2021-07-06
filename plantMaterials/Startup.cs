@@ -40,6 +40,16 @@ namespace plantMaterials
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddCors(o =>
+            {
+                o.AddPolicy("MyCors", o =>
+                {
+                    o.WithOrigins("http://localhost:4200");
+                    o.AllowAnyHeader();
+                    o.AllowAnyMethod();
+                    o.AllowCredentials();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +65,8 @@ namespace plantMaterials
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("MyCors");
 
             app.UseAuthorization();
 
