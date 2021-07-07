@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "plantMaterials", "plantMaterials\plantMaterials.csproj", "{3B9FCE4A-A892-4A81-9425-C5F8BD5A04EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlantMaterialsTests", "PlantMaterialsTests\PlantMaterialsTests.csproj", "{648E3B60-A4F1-4945-8197-74D6E013EE0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{3B9FCE4A-A892-4A81-9425-C5F8BD5A04EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B9FCE4A-A892-4A81-9425-C5F8BD5A04EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B9FCE4A-A892-4A81-9425-C5F8BD5A04EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{648E3B60-A4F1-4945-8197-74D6E013EE0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{648E3B60-A4F1-4945-8197-74D6E013EE0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{648E3B60-A4F1-4945-8197-74D6E013EE0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{648E3B60-A4F1-4945-8197-74D6E013EE0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
