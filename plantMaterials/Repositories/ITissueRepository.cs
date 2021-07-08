@@ -8,8 +8,8 @@ namespace plantMaterials.Repositories
     public interface ITissueRepository
     {
         IEnumerable<Tissue> GetAllTissues();
-        Task<ProblemDetails> AddTissue(string tissueName);
+        Task<ProblemDetails> AddTissue(Tissue tissue);
         Task<ProblemDetails> RemoveTissue(string tissueId);
-        Task<ProblemDetails> EditTissueName(string id, string newTissueName);
+        Task<ProblemDetails> EditTissueName(Tissue tissue);
     }
 }

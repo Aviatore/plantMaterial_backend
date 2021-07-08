@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using plantMaterials.Models;
 using plantMaterials.Repositories;
 
 namespace plantMaterials.Controllers
@@ -29,10 +30,10 @@ namespace plantMaterials.Controllers
             }
         }
 
-        [HttpPost("tissue/add/{tissueName}")]
-        public async Task<IActionResult> AddTissue(string tissueName)
+        [HttpPost("tissue/add")]
+        public async Task<IActionResult> AddTissue(Tissue tissue)
         {
-            var result = await _uow.TissueRepository.AddTissue(tissueName);
+            var result = await _uow.TissueRepository.AddTissue(tissue);
 
             return Ok(result);
         }
@@ -45,10 +46,10 @@ namespace plantMaterials.Controllers
             return Ok(result);
         }
 
-        [HttpPut("tissue/edit/{tissueId}/{newTissueName}")]
-        public async Task<IActionResult> EditTissue(string tissueId, string newTissueName)
+        [HttpPut("tissue/edit")]
+        public async Task<IActionResult> EditTissue(Tissue tissue)
         {
-            var result = await _uow.TissueRepository.EditTissueName(tissueId, newTissueName);
+            var result = await _uow.TissueRepository.EditTissueName(tissue);
 
             return Ok(result);
         }

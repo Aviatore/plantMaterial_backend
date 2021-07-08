@@ -23,33 +23,34 @@ namespace PlantMaterialsTests
 
         [Order(1)]
         [TestCaseSource(nameof(NewTissueItems))]
-        public async Task AddTissue_NewItem(string tissueName)
+        public async Task AddTissue_NewItem(Tissue tissue)
         {
-            await _uow.TissueRepository.AddTissue(tissueName);
+            await _uow.TissueRepository.AddTissue(tissue);
             
-            Assert.That(_uow.DbContext.Tissues.SingleOrDefault(p => p.TissueName.Equals(tissueName)), Is.Not.Null);
+            Assert.That(_uow.DbContext.Tissues.SingleOrDefault(p => p.TissueName.Equals(tissue.TissueName)), Is.Not.Null);
         }
         
         [Order(2)]
         [TestCaseSource(nameof(ChangeTissueName))]
-        public async Task EditTissueName(string oldName, string newName)
+        public async Task EditTissueName(Tissue tissue1, Tissue tissue2)
         {
-            var id = _uow.DbContext.Tissues.Single(p => p.TissueName.Equals(oldName)).TissueId;
+            var id = _uow.DbContext.Tissues.Single(p => p.TissueName.Equals(tissue1.TissueName)).TissueId;
+            tissue2.TissueId = id;
             
-            await _uow.TissueRepository.EditTissueName(id.ToString(), newName);
+            await _uow.TissueRepository.EditTissueName(tissue2);
             
-            Assert.That(_uow.DbContext.Tissues.Single(p => p.TissueId == id).TissueName, Is.EqualTo(newName));
+            Assert.That(_uow.DbContext.Tissues.Single(p => p.TissueId == id).TissueName, Is.EqualTo(tissue2.TissueName));
         }
         
         [Order(3)]
         [TestCaseSource(nameof(ChangeTissueName))]
-        public async Task RemoveTissue(string oldName, string newName)
+        public async Task RemoveTissue(Tissue tissue1, Tissue tissue2)
         {
-            var id = _uow.DbContext.Tissues.Single(p => p.TissueName.Equals(newName)).TissueId;
-            
+            var id = _uow.DbContext.Tissues.Single(p => p.TissueName.Equals(tissue2.TissueName)).TissueId;
+
             await _uow.TissueRepository.RemoveTissue(id.ToString());
             
-            Assert.That(_uow.DbContext.Tissues.SingleOrDefault(p => p.TissueName.Equals(newName)), Is.Null);
+            Assert.That(_uow.DbContext.Tissues.SingleOrDefault(p => p.TissueName.Equals(tissue2.TissueName)), Is.Null);
         }
         
         
@@ -60,18 +61,15 @@ namespace PlantMaterialsTests
             List<Tissue> tissuesToRemove = new List<Tissue>();
             foreach (var item in NewTissueItems)
             {
-                foreach (var name in item.Arguments)
-                {
-                    var tissues = _uow.DbContext.Tissues.Where(p => p.TissueName.Equals(name)).ToList();
-                    tissuesToRemove.AddRange(tissues);
-                }
+                var tissues = _uow.DbContext.Tissues.Where(p => p.TissueName.Equals(item.TissueName)).ToList();
+                tissuesToRemove.AddRange(tissues);
             }
             
             foreach (var item in ChangeTissueName)
             {
-                foreach (var name in item.Arguments)
+                foreach (var name in item)
                 {
-                    var tissues = _uow.DbContext.Tissues.Where(p => p.TissueName.Equals(name)).ToList();
+                    var tissues = _uow.DbContext.Tissues.Where(p => p.TissueName.Equals(name.TissueName)).ToList();
                     tissuesToRemove.AddRange(tissues);
                 }
             }
@@ -85,19 +83,23 @@ namespace PlantMaterialsTests
             _uow.DbContext.Dispose();
         }
 
-        private static IEnumerable<TestCaseData> NewTissueItems
+        private static IEnumerable<Tissue> NewTissueItems
         {
             get
             {
-                yield return new TestCaseData("Tissue1");
+                yield return new Tissue() {TissueName = "Tissue1", TissueDescription = "Description1"};
             }
         }
 
-        private static IEnumerable<TestCaseData> ChangeTissueName
+        private static IEnumerable<Tissue[]> ChangeTissueName
         {
             get
             {
-                yield return new TestCaseData("Tissue1", "Tissue2");
+                yield return new []
+                {
+                    new Tissue() {TissueName = "Tissue1"},
+                    new Tissue() {TissueName = "Tissue2"}
+                };
             }
         }
     }

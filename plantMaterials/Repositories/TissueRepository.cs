@@ -23,7 +23,7 @@ namespace plantMaterials.Repositories
             return _dbContext.Tissues.AsNoTracking().AsEnumerable();
         }
 
-        public async Task<ProblemDetails> AddTissue(string tissueName)
+        public async Task<ProblemDetails> AddTissue(Tissue tissue)
         {
             ProblemDetails problemDetails = new ProblemDetails()
             {
@@ -33,14 +33,15 @@ namespace plantMaterials.Repositories
 
             try
             {
-                if (tissueName is null)
+                if (tissue is null || tissue.TissueName is null)
                 {
                     throw new Exception("Tissue name cannot be empty");
                 }
 
                 var newTissue = new Tissue()
                 {
-                    TissueName = tissueName
+                    TissueName = tissue.TissueName,
+                    TissueDescription = tissue.TissueDescription
                 };
                 
                 _dbContext.Tissues.Add(newTissue);
@@ -106,7 +107,7 @@ namespace plantMaterials.Repositories
             }
         }
 
-        public async Task<ProblemDetails> EditTissueName(string id, string newTissueName)
+        public async Task<ProblemDetails> EditTissueName(Tissue tissue)
         {
             ProblemDetails problemDetails = new ProblemDetails()
             {
@@ -117,12 +118,12 @@ namespace plantMaterials.Repositories
             try
             {
                 Guid tissueId;
-                if (!Guid.TryParse(id, out tissueId))
+                if (!Guid.TryParse(tissue.TissueId.ToString(), out tissueId))
                 {
                     throw new Exception("Tissue Id is in wrong format");
                 }
 
-                if (newTissueName is null)
+                if (tissue.TissueName is null)
                 {
                     throw new Exception("Tissue name cannot be empty");
                 }
@@ -134,7 +135,8 @@ namespace plantMaterials.Repositories
                     throw new Exception("Could not find a tissue of the specified Id");
                 }
                 
-                editedTissue.TissueName = newTissueName;
+                editedTissue.TissueName = tissue.TissueName;
+                editedTissue.TissueDescription = tissue.TissueDescription;
 
                 await _dbContext.SaveChangesAsync();
 
