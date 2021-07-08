@@ -23,10 +23,12 @@ namespace plantMaterials.Models
         public virtual DbSet<Duplication> Duplications { get; set; }
         public virtual DbSet<Location> Locations { get; set; }
         public virtual DbSet<LocationType> LocationTypes { get; set; }
+        public virtual DbSet<Phenotype> Phenotypes { get; set; }
         public virtual DbSet<PlantSample> PlantSamples { get; set; }
         public virtual DbSet<Population> Populations { get; set; }
         public virtual DbSet<Prep> Preps { get; set; }
         public virtual DbSet<PrepType> PrepTypes { get; set; }
+        public virtual DbSet<SampleWeight> SampleWeights { get; set; }
         public virtual DbSet<ShelfPosition> ShelfPositions { get; set; }
         public virtual DbSet<Species> Species { get; set; }
         public virtual DbSet<SpeciesAlias> SpeciesAliases { get; set; }
@@ -37,7 +39,7 @@ namespace plantMaterials.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=localhost;database=plant_materials;user id=sa;password=Gtm7dpi4zwt");
+                optionsBuilder.UseSqlServer("server=localhost;database=plant_materials;user id=sa;password=Gtm7dpi4zwt");
             }
         }
 
@@ -64,11 +66,11 @@ namespace plantMaterials.Models
                     .HasColumnType("datetime")
                     .HasColumnName("analysis_date");
 
-                entity.Property(e => e.AnalysisTypeId).HasColumnName("analysis_type_id");
-
-                entity.Property(e => e.Description)
+                entity.Property(e => e.AnalysisDescription)
                     .IsUnicode(false)
-                    .HasColumnName("description");
+                    .HasColumnName("analysis_description");
+
+                entity.Property(e => e.AnalysisTypeId).HasColumnName("analysis_type_id");
 
                 entity.Property(e => e.PrepId).HasColumnName("prep_id");
 
@@ -99,6 +101,10 @@ namespace plantMaterials.Models
                     .HasColumnName("analysis_type_id")
                     .HasDefaultValueSql("(newsequentialid())");
 
+                entity.Property(e => e.AnalysisDescription)
+                    .IsUnicode(false)
+                    .HasColumnName("analysis_description");
+
                 entity.Property(e => e.AnalysisTypeName)
                     .HasMaxLength(100)
                     .IsUnicode(false)
@@ -119,6 +125,10 @@ namespace plantMaterials.Models
                 entity.Property(e => e.ContainerTypeId)
                     .HasColumnName("container_type_id")
                     .HasDefaultValueSql("(newsequentialid())");
+
+                entity.Property(e => e.ContainerDescription)
+                    .IsUnicode(false)
+                    .HasColumnName("container_description");
 
                 entity.Property(e => e.ContainerTypeName)
                     .HasMaxLength(100)
@@ -160,6 +170,10 @@ namespace plantMaterials.Models
                     .HasDefaultValueSql("(newsequentialid())");
 
                 entity.Property(e => e.ContainerTypeId).HasColumnName("container_type_id");
+
+                entity.Property(e => e.LocationDescription)
+                    .IsUnicode(false)
+                    .HasColumnName("location_description");
 
                 entity.Property(e => e.LocationName)
                     .HasMaxLength(100)
@@ -210,6 +224,31 @@ namespace plantMaterials.Models
                     .HasColumnName("location_type_name");
             });
 
+            modelBuilder.Entity<Phenotype>(entity =>
+            {
+                entity.HasKey(e => e.PhenotypeId)
+                    .HasName("phenotypes_pk")
+                    .IsClustered(false);
+
+                entity.ToTable("phenotypes");
+
+                entity.HasIndex(e => e.PhenotypeId, "phenotypes_phenotype_id_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.PhenotypeId)
+                    .HasColumnName("phenotype_id")
+                    .HasDefaultValueSql("(newsequentialid())");
+
+                entity.Property(e => e.PhenotypeDescription)
+                    .IsUnicode(false)
+                    .HasColumnName("phenotype_description");
+
+                entity.Property(e => e.PhenotypeName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("phenotype_name");
+            });
+
             modelBuilder.Entity<PlantSample>(entity =>
             {
                 entity.HasKey(e => e.PlantSampleId)
@@ -229,13 +268,15 @@ namespace plantMaterials.Models
                     .HasColumnType("datetime")
                     .HasColumnName("collection_date");
 
-                entity.Property(e => e.Description)
-                    .IsUnicode(false)
-                    .HasColumnName("description");
-
                 entity.Property(e => e.DuplicationId).HasColumnName("duplication_id");
 
                 entity.Property(e => e.LocationId).HasColumnName("location_id");
+
+                entity.Property(e => e.PhenotypeId).HasColumnName("phenotype_id");
+
+                entity.Property(e => e.PlantSampleDescription)
+                    .IsUnicode(false)
+                    .HasColumnName("plant_sample_description");
 
                 entity.Property(e => e.PopulationId).HasColumnName("population_id");
 
@@ -244,6 +285,8 @@ namespace plantMaterials.Models
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("sample_name");
+
+                entity.Property(e => e.SampleWeightId).HasColumnName("sample_weight_id");
 
                 entity.Property(e => e.TissueId).HasColumnName("tissue_id");
 
@@ -256,14 +299,23 @@ namespace plantMaterials.Models
                 entity.HasOne(d => d.Location)
                     .WithMany(p => p.PlantSamples)
                     .HasForeignKey(d => d.LocationId)
-                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("plant_samples_location__fk");
+
+                entity.HasOne(d => d.Phenotype)
+                    .WithMany(p => p.PlantSamples)
+                    .HasForeignKey(d => d.PhenotypeId)
+                    .HasConstraintName("plant_samples_phenotype__fk");
 
                 entity.HasOne(d => d.Population)
                     .WithMany(p => p.PlantSamples)
                     .HasForeignKey(d => d.PopulationId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("plant_samples_population__fk");
+
+                entity.HasOne(d => d.SampleWeight)
+                    .WithMany(p => p.PlantSamples)
+                    .HasForeignKey(d => d.SampleWeightId)
+                    .HasConstraintName("plant_samples_weight__fk");
 
                 entity.HasOne(d => d.Tissue)
                     .WithMany(p => p.PlantSamples)
@@ -287,9 +339,9 @@ namespace plantMaterials.Models
                     .HasColumnName("population_id")
                     .HasDefaultValueSql("(newsequentialid())");
 
-                entity.Property(e => e.Description)
+                entity.Property(e => e.PopulationDescription)
                     .IsUnicode(false)
-                    .HasColumnName("description");
+                    .HasColumnName("population_description");
 
                 entity.Property(e => e.PopulationName)
                     .HasMaxLength(100)
@@ -322,6 +374,12 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.PlantSampleId).HasColumnName("plant_sample_id");
 
+                entity.Property(e => e.PrepDescription)
+                    .IsUnicode(false)
+                    .HasColumnName("prep_description");
+
+                entity.Property(e => e.PrepLocationId).HasColumnName("prep_location_id");
+
                 entity.Property(e => e.PrepName)
                     .HasMaxLength(100)
                     .IsUnicode(false)
@@ -329,11 +387,18 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.PrepTypeId).HasColumnName("prep_type_id");
 
+                entity.Property(e => e.VolumeUl).HasColumnName("volume_ul");
+
                 entity.HasOne(d => d.PlantSample)
                     .WithMany(p => p.Preps)
                     .HasForeignKey(d => d.PlantSampleId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("preps_plant_sample__fk");
+
+                entity.HasOne(d => d.PrepLocation)
+                    .WithMany(p => p.Preps)
+                    .HasForeignKey(d => d.PrepLocationId)
+                    .HasConstraintName("preps_location__fk");
 
                 entity.HasOne(d => d.PrepType)
                     .WithMany(p => p.Preps)
@@ -357,10 +422,39 @@ namespace plantMaterials.Models
                     .HasColumnName("prep_type_id")
                     .HasDefaultValueSql("(newsequentialid())");
 
+                entity.Property(e => e.PrepDescription)
+                    .IsUnicode(false)
+                    .HasColumnName("prep_description");
+
                 entity.Property(e => e.PrepTypeName)
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("prep_type_name");
+            });
+
+            modelBuilder.Entity<SampleWeight>(entity =>
+            {
+                entity.HasKey(e => e.WeightId)
+                    .HasName("amounts_pk")
+                    .IsClustered(false);
+
+                entity.ToTable("sample_weights");
+
+                entity.HasIndex(e => e.WeightId, "amounts_amount_id_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.WeightId)
+                    .HasColumnName("weight_id")
+                    .HasDefaultValueSql("(newsequentialid())");
+
+                entity.Property(e => e.WeightDescription)
+                    .IsUnicode(false)
+                    .HasColumnName("weight_description");
+
+                entity.Property(e => e.WeightName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("weight_name");
             });
 
             modelBuilder.Entity<ShelfPosition>(entity =>
@@ -395,6 +489,10 @@ namespace plantMaterials.Models
                 entity.Property(e => e.SpeciesId)
                     .HasColumnName("species_id")
                     .HasDefaultValueSql("(newsequentialid())");
+
+                entity.Property(e => e.SpeciesDescription)
+                    .IsUnicode(false)
+                    .HasColumnName("species_description");
 
                 entity.Property(e => e.SpeciesName)
                     .IsRequired()
@@ -447,6 +545,10 @@ namespace plantMaterials.Models
                 entity.Property(e => e.TissueId)
                     .HasColumnName("tissue_id")
                     .HasDefaultValueSql("(newsequentialid())");
+
+                entity.Property(e => e.TissueDescription)
+                    .IsUnicode(false)
+                    .HasColumnName("tissue_description");
 
                 entity.Property(e => e.TissueName)
                     .HasMaxLength(100)

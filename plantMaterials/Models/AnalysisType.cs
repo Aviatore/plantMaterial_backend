@@ -14,6 +14,7 @@ namespace plantMaterials.Models
 
         public Guid AnalysisTypeId { get; set; }
         public string AnalysisTypeName { get; set; }
+        public string AnalysisDescription { get; set; }
 
         public virtual ICollection<Analysis> Analyses { get; set; }
     }

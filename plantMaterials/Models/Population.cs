@@ -14,7 +14,7 @@ namespace plantMaterials.Models
 
         public Guid PopulationId { get; set; }
         public string PopulationName { get; set; }
-        public string Description { get; set; }
+        public string PopulationDescription { get; set; }
         public Guid? SpeciesId { get; set; }
 
         public virtual Species Species { get; set; }

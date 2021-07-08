@@ -10,7 +10,7 @@ namespace plantMaterials.Models
         public Guid AnalysisId { get; set; }
         public DateTime? AnalysisDate { get; set; }
         public Guid AnalysisTypeId { get; set; }
-        public string Description { get; set; }
+        public string AnalysisDescription { get; set; }
         public Guid? PrepId { get; set; }
 
         public virtual AnalysisType AnalysisType { get; set; }

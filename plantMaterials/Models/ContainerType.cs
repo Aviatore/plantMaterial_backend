@@ -14,6 +14,7 @@ namespace plantMaterials.Models
 
         public Guid ContainerTypeId { get; set; }
         public string ContainerTypeName { get; set; }
+        public string ContainerDescription { get; set; }
 
         public virtual ICollection<Location> Locations { get; set; }
     }

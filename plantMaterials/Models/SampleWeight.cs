@@ -5,16 +5,16 @@ using System.Collections.Generic;
 
 namespace plantMaterials.Models
 {
-    public partial class Tissue
+    public partial class SampleWeight
     {
-        public Tissue()
+        public SampleWeight()
         {
             PlantSamples = new HashSet<PlantSample>();
         }
 
-        public Guid TissueId { get; set; }
-        public string TissueName { get; set; }
-        public string TissueDescription { get; set; }
+        public Guid WeightId { get; set; }
+        public string WeightName { get; set; }
+        public string WeightDescription { get; set; }
 
         public virtual ICollection<PlantSample> PlantSamples { get; set; }
     }

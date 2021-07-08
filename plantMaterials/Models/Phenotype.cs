@@ -5,16 +5,16 @@ using System.Collections.Generic;
 
 namespace plantMaterials.Models
 {
-    public partial class Tissue
+    public partial class Phenotype
     {
-        public Tissue()
+        public Phenotype()
         {
             PlantSamples = new HashSet<PlantSample>();
         }
 
-        public Guid TissueId { get; set; }
-        public string TissueName { get; set; }
-        public string TissueDescription { get; set; }
+        public Guid PhenotypeId { get; set; }
+        public string PhenotypeName { get; set; }
+        public string PhenotypeDescription { get; set; }
 
         public virtual ICollection<PlantSample> PlantSamples { get; set; }
     }

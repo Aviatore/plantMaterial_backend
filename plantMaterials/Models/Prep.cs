@@ -16,8 +16,12 @@ namespace plantMaterials.Models
         public string PrepName { get; set; }
         public Guid? PrepTypeId { get; set; }
         public Guid? PlantSampleId { get; set; }
+        public Guid? PrepLocationId { get; set; }
+        public string PrepDescription { get; set; }
+        public int? VolumeUl { get; set; }
 
         public virtual PlantSample PlantSample { get; set; }
+        public virtual Location PrepLocation { get; set; }
         public virtual PrepType PrepType { get; set; }
         public virtual ICollection<Analysis> Analyses { get; set; }
     }

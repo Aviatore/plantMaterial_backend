@@ -14,6 +14,7 @@ namespace plantMaterials.Models
 
         public Guid PrepTypeId { get; set; }
         public string PrepTypeName { get; set; }
+        public string PrepDescription { get; set; }
 
         public virtual ICollection<Prep> Preps { get; set; }
     }
