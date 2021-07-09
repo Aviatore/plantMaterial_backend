@@ -6,5 +6,6 @@ namespace plantMaterials.Repositories
     {
         PlantMaterialsContext DbContext { get; }
         ITissueRepository TissueRepository { get; }
+        IGenericRepository<T> Repository<T>() where T : class;
     }
 }

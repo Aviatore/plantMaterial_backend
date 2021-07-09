@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using plantMaterials.Mapper;
 using plantMaterials.Models;
 using plantMaterials.Repositories;
 
@@ -18,14 +20,20 @@ namespace PlantMaterialsTests
         [OneTimeSetUp]
         public void Setup()
         {
-            _uow = new UnitOfWork(new PlantMaterialsContext());
+            var mapperConfig = new MapperConfiguration(m =>
+            {
+                m.AddProfile(new MappingProfiles());
+            });
+            IMapper mapper = mapperConfig.CreateMapper();
+            
+            _uow = new UnitOfWork(new PlantMaterialsContext(), mapper);
         }
 
         [Order(1)]
         [TestCaseSource(nameof(NewTissueItems))]
         public async Task AddTissue_NewItem(Tissue tissue)
         {
-            await _uow.TissueRepository.AddTissue(tissue);
+            await _uow.Repository<Tissue>().Add(tissue);
             
             Assert.That(_uow.DbContext.Tissues.SingleOrDefault(p => p.TissueName.Equals(tissue.TissueName)), Is.Not.Null);
         }
@@ -37,7 +45,7 @@ namespace PlantMaterialsTests
             var id = _uow.DbContext.Tissues.Single(p => p.TissueName.Equals(tissue1.TissueName)).TissueId;
             tissue2.TissueId = id;
             
-            await _uow.TissueRepository.EditTissueName(tissue2);
+            await _uow.Repository<Tissue>().Edit(tissue2, id.ToString());
             
             Assert.That(_uow.DbContext.Tissues.Single(p => p.TissueId == id).TissueName, Is.EqualTo(tissue2.TissueName));
         }
@@ -48,7 +56,7 @@ namespace PlantMaterialsTests
         {
             var id = _uow.DbContext.Tissues.Single(p => p.TissueName.Equals(tissue2.TissueName)).TissueId;
 
-            await _uow.TissueRepository.RemoveTissue(id.ToString());
+            await _uow.Repository<Tissue>().Remove(id.ToString());
             
             Assert.That(_uow.DbContext.Tissues.SingleOrDefault(p => p.TissueName.Equals(tissue2.TissueName)), Is.Null);
         }

@@ -1,30 +1,35 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
-using System.Transactions;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using plantMaterials.ExtensionMethods;
 using plantMaterials.Models;
 
 namespace plantMaterials.Repositories
 {
-    public class TissueRepository : ITissueRepository
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private PlantMaterialsContext _dbContext;
+        private DbSet<T> _objectSet;
+        private readonly IMapper _mapper;
 
-        public TissueRepository(PlantMaterialsContext plantMaterialsContext)
+        public GenericRepository(PlantMaterialsContext plantMaterialsContext, IMapper mapper)
         {
             _dbContext = plantMaterialsContext;
+            _objectSet = plantMaterialsContext.Set<T>();
+            _mapper = mapper;
         }
-
-        public IEnumerable<Tissue> GetAllTissues()
+        
+        public IEnumerable<T> GetAll()
         {
-            return _dbContext.Tissues.AsNoTracking().AsEnumerable();
+            return _objectSet.AsNoTracking().AsEnumerable();
         }
-
-        public async Task<ProblemDetails> AddTissue(Tissue tissue)
+        
+        public async Task<ProblemDetails> Add(T item)
         {
             ProblemDetails problemDetails = new ProblemDetails()
             {
@@ -34,16 +39,16 @@ namespace plantMaterials.Repositories
 
             try
             {
-                if (tissue is null || tissue.TissueName is null)
+                if (item is null)
                 {
-                    throw new Exception("Tissue name cannot be empty");
+                    throw new Exception("Item cannot be empty");
                 }
 
-                _dbContext.Tissues.Add(tissue);
+                _objectSet.Add(item);
 
                 await _dbContext.SaveChangesAsync();
 
-                problemDetails.Detail = "New tissue added successfully";
+                problemDetails.Detail = "Item added successfully";
                 problemDetails.Status = 200;
 
                 return problemDetails;
@@ -55,7 +60,7 @@ namespace plantMaterials.Repositories
             }
         }
         
-        public async Task<ProblemDetails> RemoveTissue(string tissueId)
+        public async Task<ProblemDetails> Remove(string item_id)
         {
             ProblemDetails problemDetails = new ProblemDetails()
             {
@@ -65,32 +70,32 @@ namespace plantMaterials.Repositories
 
             try
             {
-                if (tissueId is null)
+                if (item_id is null)
                 {
-                    throw new Exception("Tissue Id cannot be empty");
+                    throw new Exception("Id cannot be empty");
                 }
 
                 Guid id;
-                if (!Guid.TryParse(tissueId, out id))
+                if (!Guid.TryParse(item_id, out id))
                 {
-                    throw new Exception("Tissue Id was provided in the wrong format");
+                    throw new Exception("Id was provided in the wrong format");
                 }
 
-                var tissueToRemove = _dbContext.Tissues.SingleOrDefault(p => p.TissueId == id);
+                var itemToRemove = await _objectSet.FindAsync(id);
 
-                if (tissueToRemove is null)
+                if (itemToRemove is null)
                 {
-                    throw new Exception("Tissue was not found in the database");
+                    throw new Exception("Item was not found in the database");
                 }
 
-                _dbContext.Tissues.Remove(tissueToRemove);
+                _objectSet.Remove(itemToRemove);
 
                 if (!(await _dbContext.SaveChangesAsync() > 0))
                 {
-                    throw new Exception("Something went wrong during tissue removal");
+                    throw new Exception("Something went wrong during item removal");
                 }
 
-                problemDetails.Detail = "New tissue removed successfully";
+                problemDetails.Detail = "Item removed successfully";
                 problemDetails.Status = 200;
 
                 return problemDetails;
@@ -101,38 +106,38 @@ namespace plantMaterials.Repositories
                 return problemDetails;
             }
         }
-
-        public async Task<ProblemDetails> EditTissueName(Tissue tissue)
+        
+        public async Task<ProblemDetails> Edit(T item, string id)
         {
             ProblemDetails problemDetails = new ProblemDetails()
             {
-                Detail = "Something went wrong during editing tissue name",
+                Detail = "Something went wrong",
                 Status = 500
             };
 
             try
             {
-                Guid tissueId;
-                if (!Guid.TryParse(tissue.TissueId.ToString(), out tissueId))
+                Guid itemId;
+                if (!Guid.TryParse(id, out itemId))
                 {
-                    throw new Exception("Tissue Id is in wrong format");
+                    throw new Exception("Id is in wrong format");
                 }
 
-                if (tissue.TissueName is null)
+                if (item is null)
                 {
-                    throw new Exception("Tissue name cannot be empty");
+                    throw new Exception("Item cannot be empty");
                 }
-
-                var editedTissue = await _dbContext.Tissues.FindAsync(tissue.TissueId);
-                //var editedTissue = await _dbContext.Tissues.SingleOrDefaultAsync(p => p.TissueId == tissueId);
+                
+                
+                var editedTissue = await _objectSet.FindAsync(itemId);
 
                 if (editedTissue is null)
                 {
-                    throw new Exception("Could not find a tissue of the specified Id");
+                    throw new Exception("Could not find an item of the specified Id");
                 }
-                
-                editedTissue.TissueName = tissue.TissueName;
-                editedTissue.TissueDescription = tissue.TissueDescription;
+
+                _mapper.Map<T, T>(item, editedTissue);
+                // editedTissue.CopyPropertiesFrom(item);
 
                 await _dbContext.SaveChangesAsync();
 
