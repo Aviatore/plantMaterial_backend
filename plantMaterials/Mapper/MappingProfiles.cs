@@ -1,5 +1,7 @@
+using System.Linq;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore.Query;
+using plantMaterials.DTOs;
 using plantMaterials.Models;
 
 namespace plantMaterials.Mapper
@@ -24,6 +26,14 @@ namespace plantMaterials.Mapper
             CreateMap<Species, Species>();
             CreateMap<SpeciesAlias, SpeciesAlias>();
             CreateMap<Tissue, Tissue>();
+            
+            CreateMap<Species, SpeciesWithAliasDto>().ConvertUsing(p => new SpeciesWithAliasDto()
+            {
+                SpeciesId = p.SpeciesId,
+                SpeciesName = p.SpeciesName,
+                SpeciesDescription = p.SpeciesDescription,
+                SpeciesAliases = p.SpeciesAliases.Select(a => a.Alias).ToArray()
+            });
         }
     }
 }

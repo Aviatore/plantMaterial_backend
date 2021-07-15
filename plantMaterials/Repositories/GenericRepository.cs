@@ -13,15 +13,15 @@ namespace plantMaterials.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private PlantMaterialsContext _dbContext;
+        public PlantMaterialsContext DbContext { get; }
         private DbSet<T> _objectSet;
-        private readonly IMapper _mapper;
+        public IMapper Mapper { get; }
 
         public GenericRepository(PlantMaterialsContext plantMaterialsContext, IMapper mapper)
         {
-            _dbContext = plantMaterialsContext;
+            DbContext = plantMaterialsContext;
             _objectSet = plantMaterialsContext.Set<T>();
-            _mapper = mapper;
+            Mapper = mapper;
         }
         
         public IEnumerable<T> GetAll()
@@ -46,7 +46,7 @@ namespace plantMaterials.Repositories
 
                 _objectSet.Add(item);
 
-                await _dbContext.SaveChangesAsync();
+                await DbContext.SaveChangesAsync();
 
                 problemDetails.Detail = "Item added successfully";
                 problemDetails.Status = 200;
@@ -90,7 +90,7 @@ namespace plantMaterials.Repositories
 
                 _objectSet.Remove(itemToRemove);
 
-                if (!(await _dbContext.SaveChangesAsync() > 0))
+                if (!(await DbContext.SaveChangesAsync() > 0))
                 {
                     throw new Exception("Something went wrong during item removal");
                 }
@@ -136,10 +136,10 @@ namespace plantMaterials.Repositories
                     throw new Exception("Could not find an item of the specified Id");
                 }
 
-                _mapper.Map<T, T>(item, editedTissue);
+                Mapper.Map<T, T>(item, editedTissue);
                 // editedTissue.CopyPropertiesFrom(item);
 
-                await _dbContext.SaveChangesAsync();
+                await DbContext.SaveChangesAsync();
 
                 problemDetails.Detail = "Tissue name changed successfully";
                 problemDetails.Status = 200;
