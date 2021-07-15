@@ -38,6 +38,7 @@ namespace plantMaterials
             services.AddDbContext<PlantMaterialsContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                options.EnableSensitiveDataLogging();
             });
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddCors(o =>

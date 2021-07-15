@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using plantMaterials.DTOs;
 using plantMaterials.ExtensionMethods;
 using plantMaterials.Models;
 using plantMaterials.Repositories;
@@ -41,6 +42,28 @@ namespace plantMaterials.Controllers
         public async Task<IActionResult> RemoveSpecies(string speciesId)
         {
             var result = await _uow.Repository<Species>().Remove(speciesId);
+
+            return Ok(result);
+        }
+
+        [HttpPost("species/{speciesId}/edit")]
+        public async Task<IActionResult> EditSpecies(string speciesId, [FromBody]SpeciesWithAliasDto species)
+        {
+            if (!Guid.TryParse(speciesId, out var id))
+            {
+                ProblemDetails problemDetails = new ProblemDetails()
+                {
+                    Detail = "Provided id is not valid",
+                    Status = 500
+                };
+                
+                return Ok(problemDetails);
+            }
+            
+            species.SpeciesId = id;
+            
+            var aliasesBySpeciesId = _uow.Repository<SpeciesAlias>().GetAll().Where(p => p.SpeciesId.ToString().Equals(speciesId)).ToList();
+            var result = await _uow.Repository<Species>().EditWithAliases(species, aliasesBySpeciesId);
 
             return Ok(result);
         }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using plantMaterials.DTOs;
@@ -22,6 +24,77 @@ namespace plantMaterials.ExtensionMethods
                 .SingleOrDefault(p => p.SpeciesId == Guid.Parse(speciesId));
 
             return repo.Mapper.Map<Species, SpeciesWithAliasDto>(species);
+        }
+
+        public static async Task<ProblemDetails> EditWithAliases(this IGenericRepository<Species> repo, SpeciesWithAliasDto species, List<SpeciesAlias> aliases)
+        {
+            ProblemDetails problemDetails = new ProblemDetails()
+            {
+                Detail = "A problem occur while editing species",
+                Status = 500
+            };
+
+            try
+            {
+                var aliasesToRemove = aliases.Where(p => !species.SpeciesAliases.Contains(p.Alias));
+                var aliasesToAdd = species.SpeciesAliases.Where(p => !aliases.Select(a => a.Alias).Contains(p));
+
+                foreach (var alias in aliasesToAdd)
+                {
+                    SpeciesAlias speciesAlias = new SpeciesAlias()
+                    {
+                        SpeciesAliasId = Guid.Empty,
+                        SpeciesId = species.SpeciesId,
+                        Alias = alias
+                    };
+
+                    repo.DbContext.SpeciesAliases.Add(speciesAlias);
+                }
+                
+                await repo.DbContext.SaveChangesAsync();
+
+                repo.DbContext.SpeciesAliases.RemoveRange(aliasesToRemove);
+
+                var currentSpecies = repo.GetAll().SingleOrDefault(p => p.SpeciesId == species.SpeciesId);
+
+                if (currentSpecies is null)
+                {
+                    throw new Exception($"Cannot find species of id: {species.SpeciesId} in the database");
+                }
+
+                var updatedSpecies = repo.Mapper.Map(species, new Species());
+
+                if (updatedSpecies is null)
+                {
+                    throw new Exception("Updated species is null");
+                }
+                
+                updatedSpecies.SpeciesId = species.SpeciesId;
+
+                var result = await repo.Edit(updatedSpecies, species.SpeciesId.ToString());
+
+                return result;
+
+                /*repo.DbContext.Species.Update(updatedSpecies); 
+
+                var c = await repo.DbContext.SaveChangesAsync();
+
+                if (c == 0)
+                {
+                    throw new Exception("Species could not be updated");
+                }
+
+                problemDetails.Detail = "Species was updated";
+                problemDetails.Status = 200;
+                
+                return problemDetails;*/
+            }
+            catch (Exception e)
+            {
+                problemDetails.Detail = e.Message;
+                await Console.Out.WriteLineAsync($"err: {e.InnerException.Message}");
+                return problemDetails;
+            }
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore.Query;
@@ -23,17 +24,7 @@ namespace plantMaterials.Mapper
             CreateMap<PrepType, PrepType>();
             CreateMap<SampleWeight, SampleWeight>();
             CreateMap<ShelfPosition, ShelfPosition>();
-            CreateMap<Species, Species>();
-            CreateMap<SpeciesAlias, SpeciesAlias>();
-            CreateMap<Tissue, Tissue>();
-            
-            CreateMap<Species, SpeciesWithAliasDto>().ConvertUsing(p => new SpeciesWithAliasDto()
-            {
-                SpeciesId = p.SpeciesId,
-                SpeciesName = p.SpeciesName,
-                SpeciesDescription = p.SpeciesDescription,
-                SpeciesAliases = p.SpeciesAliases.Select(a => a.Alias).ToArray()
-            });
+            CreateMap<Tissue, Tissue>().ForMember(p => p.TissueId, opt => opt.Ignore());
         }
     }
 }

@@ -24,9 +24,9 @@ namespace plantMaterials.Repositories
             Mapper = mapper;
         }
         
-        public IEnumerable<T> GetAll()
+        public IQueryable<T> GetAll()
         {
-            return _objectSet.AsNoTracking().AsEnumerable();
+            return _objectSet.AsNoTracking();
         }
         
         public async Task<ProblemDetails> Add(T item)
@@ -127,21 +127,12 @@ namespace plantMaterials.Repositories
                 {
                     throw new Exception("Item cannot be empty");
                 }
-                
-                
-                var editedTissue = await _objectSet.FindAsync(itemId);
 
-                if (editedTissue is null)
-                {
-                    throw new Exception("Could not find an item of the specified Id");
-                }
-
-                Mapper.Map<T, T>(item, editedTissue);
-                // editedTissue.CopyPropertiesFrom(item);
+                _objectSet.Update(item);
 
                 await DbContext.SaveChangesAsync();
 
-                problemDetails.Detail = "Tissue name changed successfully";
+                problemDetails.Detail = "Item changed successfully";
                 problemDetails.Status = 200;
 
                 return problemDetails;
