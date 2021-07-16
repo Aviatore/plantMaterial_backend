@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using plantMaterials.DTOs;
 using plantMaterials.ExtensionMethods;
@@ -13,10 +14,12 @@ namespace plantMaterials.Controllers
     public class SpeciesController : ControllerBase
     {
         private readonly IUnitOfWork _uow;
+        private readonly IMapper _mapper;
 
-        public SpeciesController(IUnitOfWork uow)
+        public SpeciesController(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
+            _mapper = mapper;
         }
 
         [HttpGet("species")]
@@ -64,6 +67,14 @@ namespace plantMaterials.Controllers
             
             var aliasesBySpeciesId = _uow.Repository<SpeciesAlias>().GetAll().Where(p => p.SpeciesId.ToString().Equals(speciesId)).ToList();
             var result = await _uow.Repository<Species>().EditWithAliases(species, aliasesBySpeciesId);
+
+            return Ok(result);
+        }
+
+        [HttpPost("species/new")]
+        public async Task<IActionResult> AddSpecies(SpeciesWithAliasDto speciesWithAliasDto)
+        {
+            var result = await _uow.Repository<Species>().AddSpecies(speciesWithAliasDto);
 
             return Ok(result);
         }

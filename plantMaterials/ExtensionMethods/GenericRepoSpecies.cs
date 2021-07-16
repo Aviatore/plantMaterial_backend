@@ -96,5 +96,60 @@ namespace plantMaterials.ExtensionMethods
                 return problemDetails;
             }
         }
+
+        public static async Task<ProblemDetails> AddSpecies(this IGenericRepository<Species> repo,
+            SpeciesWithAliasDto speciesWithAliasDto)
+        {
+            await using var transaction = await repo.DbContext.Database.BeginTransactionAsync();
+            ProblemDetails problemDetails = new ProblemDetails()
+            {
+                Detail = "Provided id is not valid",
+                Status = 500
+            };
+
+            try
+            {
+                
+                var species = repo.Mapper.Map(speciesWithAliasDto, new Species());
+                var result = repo.DbContext.Species.Add(species);
+
+                if (result is null)
+                {
+                    throw new Exception("Problem with adding a species");
+                }
+
+                await repo.DbContext.SaveChangesAsync();
+
+                foreach (var speciesAlias in speciesWithAliasDto.SpeciesAliases)
+                {
+                    var speciesAliasAddResult =
+                        repo.DbContext.SpeciesAliases.Add(new SpeciesAlias()
+                        {
+                            Alias = speciesAlias,
+                            SpeciesId = result.Entity.SpeciesId
+                        });
+
+                    if (speciesAliasAddResult is null)
+                    {
+                        throw new Exception("Problem with adding a species alias");
+                    }
+                    
+                    await repo.DbContext.SaveChangesAsync();
+                }
+                    
+                await transaction.CommitAsync();
+
+                problemDetails.Detail = "Species added successfully";
+                problemDetails.Status = 200;
+
+                return problemDetails;
+            }
+            catch (Exception e)
+            {
+                problemDetails.Detail = e.Message;
+
+                return problemDetails;
+            }
+        }
     }
 }

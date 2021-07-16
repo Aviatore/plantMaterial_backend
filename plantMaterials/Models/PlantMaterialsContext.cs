@@ -39,7 +39,7 @@ namespace plantMaterials.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server=localhost;database=plant_materials;user id=sa;password=Gtm7dpi4zwt");
+                optionsBuilder.UseSqlServer("Server=localhost;user id=sa;password=Gtm7dpi4zwt;database=plant_materials");
             }
         }
 
@@ -66,9 +66,7 @@ namespace plantMaterials.Models
                     .HasColumnType("datetime")
                     .HasColumnName("analysis_date");
 
-                entity.Property(e => e.AnalysisDescription)
-                    .IsUnicode(false)
-                    .HasColumnName("analysis_description");
+                entity.Property(e => e.AnalysisDescription).HasColumnName("analysis_description");
 
                 entity.Property(e => e.AnalysisTypeId).HasColumnName("analysis_type_id");
 
@@ -101,13 +99,10 @@ namespace plantMaterials.Models
                     .HasColumnName("analysis_type_id")
                     .HasDefaultValueSql("(newsequentialid())");
 
-                entity.Property(e => e.AnalysisDescription)
-                    .IsUnicode(false)
-                    .HasColumnName("analysis_description");
+                entity.Property(e => e.AnalysisDescription).HasColumnName("analysis_description");
 
                 entity.Property(e => e.AnalysisTypeName)
                     .HasMaxLength(100)
-                    .IsUnicode(false)
                     .HasColumnName("analysis_type_name");
             });
 
@@ -126,13 +121,10 @@ namespace plantMaterials.Models
                     .HasColumnName("container_type_id")
                     .HasDefaultValueSql("(newsequentialid())");
 
-                entity.Property(e => e.ContainerDescription)
-                    .IsUnicode(false)
-                    .HasColumnName("container_description");
+                entity.Property(e => e.ContainerDescription).HasColumnName("container_description");
 
                 entity.Property(e => e.ContainerTypeName)
                     .HasMaxLength(100)
-                    .IsUnicode(false)
                     .HasColumnName("container_type_name");
             });
 
@@ -171,13 +163,10 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.ContainerTypeId).HasColumnName("container_type_id");
 
-                entity.Property(e => e.LocationDescription)
-                    .IsUnicode(false)
-                    .HasColumnName("location_description");
+                entity.Property(e => e.LocationDescription).HasColumnName("location_description");
 
                 entity.Property(e => e.LocationName)
                     .HasMaxLength(100)
-                    .IsUnicode(false)
                     .HasColumnName("location_name");
 
                 entity.Property(e => e.LocationTypeId).HasColumnName("location_type_id");
@@ -220,7 +209,6 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.LocationTypeName)
                     .HasMaxLength(100)
-                    .IsUnicode(false)
                     .HasColumnName("location_type_name");
             });
 
@@ -239,13 +227,10 @@ namespace plantMaterials.Models
                     .HasColumnName("phenotype_id")
                     .HasDefaultValueSql("(newsequentialid())");
 
-                entity.Property(e => e.PhenotypeDescription)
-                    .IsUnicode(false)
-                    .HasColumnName("phenotype_description");
+                entity.Property(e => e.PhenotypeDescription).HasColumnName("phenotype_description");
 
                 entity.Property(e => e.PhenotypeName)
                     .HasMaxLength(100)
-                    .IsUnicode(false)
                     .HasColumnName("phenotype_name");
             });
 
@@ -274,16 +259,13 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.PhenotypeId).HasColumnName("phenotype_id");
 
-                entity.Property(e => e.PlantSampleDescription)
-                    .IsUnicode(false)
-                    .HasColumnName("plant_sample_description");
+                entity.Property(e => e.PlantSampleDescription).HasColumnName("plant_sample_description");
 
                 entity.Property(e => e.PopulationId).HasColumnName("population_id");
 
                 entity.Property(e => e.SampleName)
                     .IsRequired()
                     .HasMaxLength(100)
-                    .IsUnicode(false)
                     .HasColumnName("sample_name");
 
                 entity.Property(e => e.SampleWeightId).HasColumnName("sample_weight_id");
@@ -339,13 +321,10 @@ namespace plantMaterials.Models
                     .HasColumnName("population_id")
                     .HasDefaultValueSql("(newsequentialid())");
 
-                entity.Property(e => e.PopulationDescription)
-                    .IsUnicode(false)
-                    .HasColumnName("population_description");
+                entity.Property(e => e.PopulationDescription).HasColumnName("population_description");
 
                 entity.Property(e => e.PopulationName)
                     .HasMaxLength(100)
-                    .IsUnicode(false)
                     .HasColumnName("population_name");
 
                 entity.Property(e => e.SpeciesId).HasColumnName("species_id");
@@ -374,15 +353,12 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.PlantSampleId).HasColumnName("plant_sample_id");
 
-                entity.Property(e => e.PrepDescription)
-                    .IsUnicode(false)
-                    .HasColumnName("prep_description");
+                entity.Property(e => e.PrepDescription).HasColumnName("prep_description");
 
                 entity.Property(e => e.PrepLocationId).HasColumnName("prep_location_id");
 
                 entity.Property(e => e.PrepName)
                     .HasMaxLength(100)
-                    .IsUnicode(false)
                     .HasColumnName("prep_name");
 
                 entity.Property(e => e.PrepTypeId).HasColumnName("prep_type_id");
@@ -422,13 +398,10 @@ namespace plantMaterials.Models
                     .HasColumnName("prep_type_id")
                     .HasDefaultValueSql("(newsequentialid())");
 
-                entity.Property(e => e.PrepDescription)
-                    .IsUnicode(false)
-                    .HasColumnName("prep_description");
+                entity.Property(e => e.PrepDescription).HasColumnName("prep_description");
 
                 entity.Property(e => e.PrepTypeName)
                     .HasMaxLength(100)
-                    .IsUnicode(false)
                     .HasColumnName("prep_type_name");
             });
 
@@ -447,13 +420,10 @@ namespace plantMaterials.Models
                     .HasColumnName("weight_id")
                     .HasDefaultValueSql("(newsequentialid())");
 
-                entity.Property(e => e.WeightDescription)
-                    .IsUnicode(false)
-                    .HasColumnName("weight_description");
+                entity.Property(e => e.WeightDescription).HasColumnName("weight_description");
 
                 entity.Property(e => e.WeightName)
                     .HasMaxLength(100)
-                    .IsUnicode(false)
                     .HasColumnName("weight_name");
             });
 
@@ -490,16 +460,11 @@ namespace plantMaterials.Models
                     .HasColumnName("species_id")
                     .HasDefaultValueSql("(newsequentialid())");
 
-                entity.Property(e => e.SpeciesDescription)
-                    .IsUnicode(false)
-                    .HasColumnName("species_description");
+                entity.Property(e => e.SpeciesDescription).HasColumnName("species_description");
 
                 entity.Property(e => e.SpeciesName)
-                    .IsRequired()
                     .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("species_name")
-                    .HasDefaultValueSql("('Nan')");
+                    .HasColumnName("species_name");
             });
 
             modelBuilder.Entity<SpeciesAlias>(entity =>
@@ -519,7 +484,6 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.Alias)
                     .HasMaxLength(100)
-                    .IsUnicode(false)
                     .HasColumnName("alias");
 
                 entity.Property(e => e.SpeciesId).HasColumnName("species_id");
@@ -527,7 +491,7 @@ namespace plantMaterials.Models
                 entity.HasOne(d => d.Species)
                     .WithMany(p => p.SpeciesAliases)
                     .HasForeignKey(d => d.SpeciesId)
-                    .OnDelete(DeleteBehavior.SetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("species_aliases_species__fk");
             });
 
@@ -546,13 +510,10 @@ namespace plantMaterials.Models
                     .HasColumnName("tissue_id")
                     .HasDefaultValueSql("(newsequentialid())");
 
-                entity.Property(e => e.TissueDescription)
-                    .IsUnicode(false)
-                    .HasColumnName("tissue_description");
+                entity.Property(e => e.TissueDescription).HasColumnName("tissue_description");
 
                 entity.Property(e => e.TissueName)
                     .HasMaxLength(100)
-                    .IsUnicode(false)
                     .HasColumnName("tissue_name");
             });
 
