@@ -67,5 +67,58 @@ namespace plantMaterials.Controllers
             var resultAdd = await _uow.Repository<ContainerType>().Add(container);
             return Ok(resultAdd);
         }
+        
+        
+        [HttpGet("location-types")]
+        public async Task<IActionResult> ShowAllLocationTypes([FromQuery]string locationTypeId=null)
+        {
+            try
+            {
+                if (locationTypeId is null)
+                {
+                    var locationTypes = _uow.Repository<LocationType>().GetAll();
+                    
+                    return Ok(locationTypes);
+                }
+
+                var locationType = await _uow.Repository<LocationType>().Get(locationTypeId);
+                return Ok(locationType);
+            }
+            catch (Exception e)
+            {
+                return Problem(detail: e.Message, statusCode: 500);
+            }
+        }
+        
+        [HttpPost("location-types/add")]
+        public async Task<IActionResult> AddLocationType(LocationType locationType)
+        {
+            var result = await _uow.Repository<LocationType>().Add(locationType);
+
+            return Ok(result);
+        }
+        
+        [HttpGet("location-types/remove")]
+        public async Task<IActionResult> RemoveLocationType([FromQuery]string locationTypeId)
+        {
+            var result = await _uow.Repository<LocationType>().Remove(locationTypeId);
+
+            return Ok(result);
+        }
+        
+        [HttpPost("location-types/edit")]
+        public async Task<IActionResult> EditLocationType([FromBody]LocationType locationType)
+        {
+            Console.Out.WriteLine($"Container type name: {locationType.LocationTypeName}");
+            if (locationType.LocationTypeId != Guid.Empty)
+            {
+                var result = await _uow.Repository<LocationType>().Edit(locationType, locationType.LocationTypeId.ToString());
+
+                return Ok(result);
+            }
+
+            var resultAdd = await _uow.Repository<LocationType>().Add(locationType);
+            return Ok(resultAdd);
+        }
     }
 }
