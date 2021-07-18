@@ -28,6 +28,16 @@ namespace plantMaterials.Repositories
         {
             return _objectSet.AsNoTracking();
         }
+
+        public async Task<T> Get(string itemId)
+        {
+            if (!Guid.TryParse(itemId, out Guid id))
+            { 
+                return null;
+            }
+
+            return await _objectSet.FindAsync(id);
+        }
         
         public async Task<ProblemDetails> Add(T item)
         {
@@ -60,7 +70,7 @@ namespace plantMaterials.Repositories
             }
         }
         
-        public async Task<ProblemDetails> Remove(string item_id)
+        public async Task<ProblemDetails> Remove(string itemId)
         {
             ProblemDetails problemDetails = new ProblemDetails()
             {
@@ -70,13 +80,13 @@ namespace plantMaterials.Repositories
 
             try
             {
-                if (item_id is null)
+                if (itemId is null)
                 {
                     throw new Exception("Id cannot be empty");
                 }
 
                 Guid id;
-                if (!Guid.TryParse(item_id, out id))
+                if (!Guid.TryParse(itemId, out id))
                 {
                     throw new Exception("Id was provided in the wrong format");
                 }

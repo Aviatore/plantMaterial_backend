@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -12,8 +13,9 @@ namespace plantMaterials.Repositories
         PlantMaterialsContext DbContext { get; }
         IMapper Mapper { get; }
         IQueryable<T> GetAll();
+        Task<T> Get(string itemId);
         Task<ProblemDetails> Add(T item);
-        Task<ProblemDetails> Remove(string item_id);
+        Task<ProblemDetails> Remove(string itemId);
         Task<ProblemDetails> Edit(T item, string id);
     }
 }

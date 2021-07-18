@@ -17,13 +17,19 @@ namespace plantMaterials.Controllers
         }
         
         [HttpGet("tissues")]
-        public IActionResult ShowAllTissues()
+        public async Task<IActionResult> ShowAllTissues([FromQuery]string tissueId=null)
         {
             try
             {
-                var tissues = _uow.Repository<Tissue>().GetAll();
-                // var tissues = _uow.TissueRepository.GetAllTissues();
-                return Ok(tissues);
+                if (tissueId is null)
+                {
+                    var tissues = _uow.Repository<Tissue>().GetAll();
+                    // var tissues = _uow.TissueRepository.GetAllTissues();
+                    return Ok(tissues);
+                }
+
+                var tissue = await _uow.Repository<Tissue>().Get(tissueId);
+                return Ok(tissue);
             }
             catch (Exception e)
             {
@@ -40,8 +46,8 @@ namespace plantMaterials.Controllers
             return Ok(result);
         }
         
-        [HttpPost("tissue/remove/{tissueId}")]
-        public async Task<IActionResult> RemoveTissue(string tissueId)
+        [HttpGet("tissue/remove")]
+        public async Task<IActionResult> RemoveTissue([FromQuery]string tissueId)
         {
             var result = await _uow.Repository<Tissue>().Remove(tissueId);
             /*var result = await _uow.TissueRepository.RemoveTissue(tissueId);*/
@@ -49,13 +55,20 @@ namespace plantMaterials.Controllers
             return Ok(result);
         }
 
-        [HttpPut("tissue/edit")]
-        public async Task<IActionResult> EditTissue(Tissue tissue)
+        [HttpPost("tissue/edit")]
+        public async Task<IActionResult> EditTissue([FromBody]Tissue tissue)
         {
-            var result = await _uow.Repository<Tissue>().Edit(tissue, tissue.TissueId.ToString());
-            /*var result = await _uow.TissueRepository.EditTissueName(tissue);*/
+            Console.Out.WriteLine($"Tissue name: {tissue.TissueName}");
+            if (tissue.TissueId != Guid.Empty)
+            {
+                var result = await _uow.Repository<Tissue>().Edit(tissue, tissue.TissueId.ToString());
+                /*var result = await _uow.TissueRepository.EditTissueName(tissue);*/
 
-            return Ok(result);
+                return Ok(result);
+            }
+
+            var resultAdd = await _uow.Repository<Tissue>().Add(tissue);
+            return Ok(resultAdd);
         }
     }
 }
