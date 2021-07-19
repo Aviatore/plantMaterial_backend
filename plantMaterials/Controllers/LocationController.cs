@@ -120,5 +120,58 @@ namespace plantMaterials.Controllers
             var resultAdd = await _uow.Repository<LocationType>().Add(locationType);
             return Ok(resultAdd);
         }
+        
+        
+        [HttpGet("shelf-positions")]
+        public async Task<IActionResult> ShowAllShelfPositions([FromQuery]string shelfPositionId=null)
+        {
+            try
+            {
+                if (shelfPositionId is null)
+                {
+                    var shelfPositions = _uow.Repository<ShelfPosition>().GetAll();
+                    
+                    return Ok(shelfPositions);
+                }
+
+                var locationType = await _uow.Repository<ShelfPosition>().Get(shelfPositionId);
+                return Ok(locationType);
+            }
+            catch (Exception e)
+            {
+                return Problem(detail: e.Message, statusCode: 500);
+            }
+        }
+        
+        [HttpPost("shelf-positions/add")]
+        public async Task<IActionResult> AddShelfPosition(ShelfPosition shelfPosition)
+        {
+            var result = await _uow.Repository<ShelfPosition>().Add(shelfPosition);
+
+            return Ok(result);
+        }
+        
+        [HttpGet("shelf-positions/remove")]
+        public async Task<IActionResult> RemoveShelfPosition([FromQuery]string shelfPositionId)
+        {
+            var result = await _uow.Repository<ShelfPosition>().Remove(shelfPositionId);
+
+            return Ok(result);
+        }
+        
+        [HttpPost("shelf-positions/edit")]
+        public async Task<IActionResult> EditShelfPosition([FromBody]ShelfPosition shelfPosition)
+        {
+            Console.Out.WriteLine($"Shelf position name: {shelfPosition.ShelfPositionName.ToString()}");
+            if (shelfPosition.ShelfPositionId != Guid.Empty)
+            {
+                var result = await _uow.Repository<ShelfPosition>().Edit(shelfPosition, shelfPosition.ShelfPositionId.ToString());
+
+                return Ok(result);
+            }
+
+            var resultAdd = await _uow.Repository<ShelfPosition>().Add(shelfPosition);
+            return Ok(resultAdd);
+        }
     }
 }
