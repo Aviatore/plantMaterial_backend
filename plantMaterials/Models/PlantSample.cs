@@ -22,6 +22,8 @@ namespace plantMaterials.Models
         public Guid? DuplicationId { get; set; }
         public Guid? PhenotypeId { get; set; }
         public Guid? SampleWeightId { get; set; }
+        public Guid? ShelfPositionId { get; set; }
+        public Guid? ContainerTypeId { get; set; }
 
         public virtual Duplication Duplication { get; set; }
         public virtual Location Location { get; set; }

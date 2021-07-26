@@ -16,12 +16,8 @@ namespace plantMaterials.ExtensionMethods
             {
                 LocationId = p.LocationId,
                 LocationName = p.LocationName,
-                ShelfPositionId = p.ShelfPositionId,
-                ShelfPositionName = p.ShelfPosition.ShelfPositionName,
                 LocationTypeId = p.LocationTypeId,
                 LocationTypeName = p.LocationType.LocationTypeName,
-                ContainerTypeId = p.ContainerTypeId,
-                ContainerTypeName = p.ContainerType.ContainerTypeName,
                 LocationDescription = p.LocationDescription
             });
         }

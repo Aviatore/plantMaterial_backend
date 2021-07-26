@@ -39,7 +39,7 @@ namespace plantMaterials.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=localhost;user id=sa;password=Gtm7dpi4zwt;database=plant_materials");
+                optionsBuilder.UseSqlServer("server=localhost;database=plant_materials;user id=sa;password=Gtm7dpi4zwt");
             }
         }
 
@@ -54,6 +54,10 @@ namespace plantMaterials.Models
                     .IsClustered(false);
 
                 entity.ToTable("analyses");
+
+                entity.HasIndex(e => e.AnalysisTypeId, "IX_analyses_analysis_type_id");
+
+                entity.HasIndex(e => e.PrepId, "IX_analyses_prep_id");
 
                 entity.HasIndex(e => e.AnalysisId, "analyses_analysis_id_uindex")
                     .IsUnique();
@@ -154,14 +158,14 @@ namespace plantMaterials.Models
 
                 entity.ToTable("locations");
 
+                entity.HasIndex(e => e.LocationTypeId, "IX_locations_location_type_id");
+
                 entity.HasIndex(e => e.LocationId, "locations_location_id_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.LocationId)
                     .HasColumnName("location_id")
                     .HasDefaultValueSql("(newsequentialid())");
-
-                entity.Property(e => e.ContainerTypeId).HasColumnName("container_type_id");
 
                 entity.Property(e => e.LocationDescription).HasColumnName("location_description");
 
@@ -171,25 +175,11 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.LocationTypeId).HasColumnName("location_type_id");
 
-                entity.Property(e => e.ShelfPositionId).HasColumnName("shelf_position_id");
-
-                entity.HasOne(d => d.ContainerType)
-                    .WithMany(p => p.Locations)
-                    .HasForeignKey(d => d.ContainerTypeId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("locations_container__fk");
-
                 entity.HasOne(d => d.LocationType)
                     .WithMany(p => p.Locations)
                     .HasForeignKey(d => d.LocationTypeId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("locations_type__fk");
-
-                entity.HasOne(d => d.ShelfPosition)
-                    .WithMany(p => p.Locations)
-                    .HasForeignKey(d => d.ShelfPositionId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("locations_position__fk");
             });
 
             modelBuilder.Entity<LocationType>(entity =>
@@ -242,6 +232,18 @@ namespace plantMaterials.Models
 
                 entity.ToTable("plant_samples");
 
+                entity.HasIndex(e => e.DuplicationId, "IX_plant_samples_duplication_id");
+
+                entity.HasIndex(e => e.LocationId, "IX_plant_samples_location_id");
+
+                entity.HasIndex(e => e.PhenotypeId, "IX_plant_samples_phenotype_id");
+
+                entity.HasIndex(e => e.PopulationId, "IX_plant_samples_population_id");
+
+                entity.HasIndex(e => e.SampleWeightId, "IX_plant_samples_sample_weight_id");
+
+                entity.HasIndex(e => e.TissueId, "IX_plant_samples_tissue_id");
+
                 entity.HasIndex(e => e.PlantSampleId, "plant_samples_plant_sample_id_uindex")
                     .IsUnique();
 
@@ -252,6 +254,8 @@ namespace plantMaterials.Models
                 entity.Property(e => e.CollectionDate)
                     .HasColumnType("datetime")
                     .HasColumnName("collection_date");
+
+                entity.Property(e => e.ContainerTypeId).HasColumnName("container_type_id");
 
                 entity.Property(e => e.DuplicationId).HasColumnName("duplication_id");
 
@@ -269,6 +273,8 @@ namespace plantMaterials.Models
                     .HasColumnName("sample_name");
 
                 entity.Property(e => e.SampleWeightId).HasColumnName("sample_weight_id");
+
+                entity.Property(e => e.ShelfPositionId).HasColumnName("shelf_position_id");
 
                 entity.Property(e => e.TissueId).HasColumnName("tissue_id");
 
@@ -314,6 +320,8 @@ namespace plantMaterials.Models
 
                 entity.ToTable("populations");
 
+                entity.HasIndex(e => e.SpeciesId, "IX_populations_species_id");
+
                 entity.HasIndex(e => e.PopulationId, "populations_population_id_uindex")
                     .IsUnique();
 
@@ -343,6 +351,12 @@ namespace plantMaterials.Models
                     .IsClustered(false);
 
                 entity.ToTable("preps");
+
+                entity.HasIndex(e => e.PlantSampleId, "IX_preps_plant_sample_id");
+
+                entity.HasIndex(e => e.PrepLocationId, "IX_preps_prep_location_id");
+
+                entity.HasIndex(e => e.PrepTypeId, "IX_preps_prep_type_id");
 
                 entity.HasIndex(e => e.PrepId, "preps_prep_id_uindex_2")
                     .IsUnique();
@@ -474,6 +488,8 @@ namespace plantMaterials.Models
                     .IsClustered(false);
 
                 entity.ToTable("species_aliases");
+
+                entity.HasIndex(e => e.SpeciesId, "IX_species_aliases_species_id");
 
                 entity.HasIndex(e => e.SpeciesAliasId, "species_aliases_species_alias_id_uindex")
                     .IsUnique();

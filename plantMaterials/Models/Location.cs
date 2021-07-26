@@ -15,14 +15,10 @@ namespace plantMaterials.Models
 
         public Guid LocationId { get; set; }
         public string LocationName { get; set; }
-        public Guid? ShelfPositionId { get; set; }
         public Guid? LocationTypeId { get; set; }
-        public Guid? ContainerTypeId { get; set; }
         public string LocationDescription { get; set; }
 
-        public virtual ContainerType ContainerType { get; set; }
         public virtual LocationType LocationType { get; set; }
-        public virtual ShelfPosition ShelfPosition { get; set; }
         public virtual ICollection<PlantSample> PlantSamples { get; set; }
         public virtual ICollection<Prep> Preps { get; set; }
     }
