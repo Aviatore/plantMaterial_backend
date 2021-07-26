@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using plantMaterials.ExtensionMethods;
 using plantMaterials.Models;
 using plantMaterials.Repositories;
 
@@ -171,6 +172,58 @@ namespace plantMaterials.Controllers
             }
 
             var resultAdd = await _uow.Repository<ShelfPosition>().Add(shelfPosition);
+            return Ok(resultAdd);
+        }
+        
+        
+        [HttpGet("locations")]
+        public async Task<IActionResult> ShowAllLocations([FromQuery]string locationId=null)
+        {
+            try
+            {
+                if (locationId is null)
+                {
+                    var locations = _uow.Repository<Location>().GetAllLocations();
+                    
+                    return Ok(locations);
+                }
+
+                var location = await _uow.Repository<Location>().Get(locationId);
+                return Ok(location);
+            }
+            catch (Exception e)
+            {
+                return Problem(detail: e.Message, statusCode: 500);
+            }
+        }
+        
+        [HttpPost("location/add")]
+        public async Task<IActionResult> AddLocation(Location location)
+        {
+            var result = await _uow.Repository<Location>().Add(location);
+
+            return Ok(result);
+        }
+        
+        [HttpGet("location/remove")]
+        public async Task<IActionResult> RemoveLocation([FromQuery]string locationId)
+        {
+            var result = await _uow.Repository<Location>().Remove(locationId);
+
+            return Ok(result);
+        }
+        
+        [HttpPost("location/edit")]
+        public async Task<IActionResult> EditLocation([FromBody]Location location)
+        {
+            if (location.LocationId != Guid.Empty)
+            {
+                var result = await _uow.Repository<Location>().Edit(location, location.LocationId.ToString());
+
+                return Ok(result);
+            }
+
+            var resultAdd = await _uow.Repository<Location>().Add(location);
             return Ok(resultAdd);
         }
     }
