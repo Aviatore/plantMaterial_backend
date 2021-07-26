@@ -21,7 +21,7 @@ namespace plantMaterials.Models
         public Guid? LocationId { get; set; }
         public Guid? DuplicationId { get; set; }
         public Guid? PhenotypeId { get; set; }
-        public Guid? SampleWeightId { get; set; }
+        public string SampleWeight { get; set; }
         public Guid? ShelfPositionId { get; set; }
         public Guid? ContainerTypeId { get; set; }
 
@@ -29,7 +29,6 @@ namespace plantMaterials.Models
         public virtual Location Location { get; set; }
         public virtual Phenotype Phenotype { get; set; }
         public virtual Population Population { get; set; }
-        public virtual SampleWeight SampleWeight { get; set; }
         public virtual Tissue Tissue { get; set; }
         public virtual ICollection<Prep> Preps { get; set; }
     }

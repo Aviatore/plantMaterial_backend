@@ -28,7 +28,6 @@ namespace plantMaterials.Models
         public virtual DbSet<Population> Populations { get; set; }
         public virtual DbSet<Prep> Preps { get; set; }
         public virtual DbSet<PrepType> PrepTypes { get; set; }
-        public virtual DbSet<SampleWeight> SampleWeights { get; set; }
         public virtual DbSet<ShelfPosition> ShelfPositions { get; set; }
         public virtual DbSet<Species> Species { get; set; }
         public virtual DbSet<SpeciesAlias> SpeciesAliases { get; set; }
@@ -240,8 +239,6 @@ namespace plantMaterials.Models
 
                 entity.HasIndex(e => e.PopulationId, "IX_plant_samples_population_id");
 
-                entity.HasIndex(e => e.SampleWeightId, "IX_plant_samples_sample_weight_id");
-
                 entity.HasIndex(e => e.TissueId, "IX_plant_samples_tissue_id");
 
                 entity.HasIndex(e => e.PlantSampleId, "plant_samples_plant_sample_id_uindex")
@@ -272,7 +269,9 @@ namespace plantMaterials.Models
                     .HasMaxLength(100)
                     .HasColumnName("sample_name");
 
-                entity.Property(e => e.SampleWeightId).HasColumnName("sample_weight_id");
+                entity.Property(e => e.SampleWeight)
+                    .HasMaxLength(50)
+                    .HasColumnName("sample_weight");
 
                 entity.Property(e => e.ShelfPositionId).HasColumnName("shelf_position_id");
 
@@ -299,11 +298,6 @@ namespace plantMaterials.Models
                     .HasForeignKey(d => d.PopulationId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("plant_samples_population__fk");
-
-                entity.HasOne(d => d.SampleWeight)
-                    .WithMany(p => p.PlantSamples)
-                    .HasForeignKey(d => d.SampleWeightId)
-                    .HasConstraintName("plant_samples_weight__fk");
 
                 entity.HasOne(d => d.Tissue)
                     .WithMany(p => p.PlantSamples)
@@ -417,28 +411,6 @@ namespace plantMaterials.Models
                 entity.Property(e => e.PrepTypeName)
                     .HasMaxLength(100)
                     .HasColumnName("prep_type_name");
-            });
-
-            modelBuilder.Entity<SampleWeight>(entity =>
-            {
-                entity.HasKey(e => e.WeightId)
-                    .HasName("amounts_pk")
-                    .IsClustered(false);
-
-                entity.ToTable("sample_weights");
-
-                entity.HasIndex(e => e.WeightId, "amounts_amount_id_uindex")
-                    .IsUnique();
-
-                entity.Property(e => e.WeightId)
-                    .HasColumnName("weight_id")
-                    .HasDefaultValueSql("(newsequentialid())");
-
-                entity.Property(e => e.WeightDescription).HasColumnName("weight_description");
-
-                entity.Property(e => e.WeightName)
-                    .HasMaxLength(100)
-                    .HasColumnName("weight_name");
             });
 
             modelBuilder.Entity<ShelfPosition>(entity =>
