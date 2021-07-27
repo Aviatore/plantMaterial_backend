@@ -37,6 +37,13 @@ namespace plantMaterials.Controllers
                 return Problem(detail: e.Message, statusCode: 500);
             }
         }
+
+        [HttpGet("population-by-species")]
+        public IActionResult ShowPopulationsBySpecies([FromQuery] string speciesId)
+        {
+            var populations = _uow.Repository<Population>().ShowPopulationsBySpecies(speciesId);
+            return Ok(populations);
+        }
         
         [HttpGet("population/remove")]
         public async Task<IActionResult> RemovePopulation([FromQuery]string populationId)

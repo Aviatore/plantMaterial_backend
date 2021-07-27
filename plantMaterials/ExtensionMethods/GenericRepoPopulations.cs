@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using plantMaterials.DTOs;
@@ -17,6 +18,11 @@ namespace plantMaterials.ExtensionMethods
                 PopulationDescription = p.PopulationDescription,
                 SpeciesName = p.Species.SpeciesName
             });
+        }
+        
+        public static IEnumerable<Population> ShowPopulationsBySpecies(this IGenericRepository<Population> repo, string speciesId)
+        {
+            return repo.DbContext.Populations.Where(p => p.SpeciesId == Guid.Parse(speciesId));
         }
     }
 }

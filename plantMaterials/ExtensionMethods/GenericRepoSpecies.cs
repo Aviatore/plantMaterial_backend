@@ -17,7 +17,7 @@ namespace plantMaterials.ExtensionMethods
         {
             return repo.DbContext.Species.Include(p => p.SpeciesAliases).Select(p => repo.Mapper.Map<Species, SpeciesWithAliasDto>(p)).AsEnumerable();
         }
-        
+
         public static SpeciesWithAliasDto GetWithAliases(this IGenericRepository<Species> repo, string speciesId)
         {
             var species = repo.DbContext.Species.Include(p => p.SpeciesAliases)
