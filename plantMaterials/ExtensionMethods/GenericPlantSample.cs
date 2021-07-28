@@ -23,10 +23,17 @@ namespace plantMaterials.ExtensionMethods
                 {
                     await repo.DbContext.AddRangeAsync(plantSamples.AsEnumerable());
 
-                    problemDetails.Detail = "Plant samples were added";
-                    problemDetails.Status = 200;
+                    var count = await repo.DbContext.SaveChangesAsync();
 
-                    return problemDetails;
+                    if (count > 0)
+                    {
+                        problemDetails.Detail = "Plant samples were added";
+                        problemDetails.Status = 200;
+
+                        return problemDetails;
+                    }
+
+                    throw new Exception("Something went wrong while adding plant samples");
                 }
 
                 throw new Exception("Plant sample array was empty");
