@@ -112,5 +112,35 @@ namespace plantMaterials.ExtensionMethods
 
             return plantSamples;
         }
+
+        public static async Task<ProblemDetails> UpdatePlantSamples(this IGenericRepository<PlantSample> repo, PlantSample[] plantSamples)
+        {
+            ProblemDetails problemDetails = new ProblemDetails()
+            {
+                Detail = "Something went wrong while updating plant samples",
+                Status = 500
+            };
+
+            try
+            {
+                repo.DbContext.PlantSamples.UpdateRange(plantSamples);
+
+                var count = await repo.DbContext.SaveChangesAsync();
+
+                if (count > 0)
+                {
+                    problemDetails.Detail = "Plant samples updated successfully";
+                    problemDetails.Status = 200;
+                    return problemDetails;
+                }
+
+                throw new Exception("Something went wrong while updating plant samples");
+            }
+            catch (Exception e)
+            {
+                problemDetails.Detail = e.Message;
+                return problemDetails;
+            }
+        }
     }
 }

@@ -50,5 +50,13 @@ namespace plantMaterials.Controllers
 
             return Ok(result);
         }
+        
+        [HttpPost("plant-sample/update")]
+        public async Task<IActionResult> UpdatePlantSample([FromBody] PlantSample[] plantSamples)
+        {
+            var result = await _uow.Repository<PlantSample>().UpdatePlantSamples(plantSamples);
+
+            return Ok(result);
+        }
     }
 }
