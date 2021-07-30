@@ -359,6 +359,8 @@ namespace plantMaterials.Models
                     .HasColumnName("prep_id")
                     .HasDefaultValueSql("(newsequentialid())");
 
+                entity.Property(e => e.ContainerTypeId).HasColumnName("container_type_id");
+
                 entity.Property(e => e.PlantSampleId).HasColumnName("plant_sample_id");
 
                 entity.Property(e => e.PrepDescription).HasColumnName("prep_description");
@@ -371,7 +373,14 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.PrepTypeId).HasColumnName("prep_type_id");
 
+                entity.Property(e => e.ShelfPositionId).HasColumnName("shelf_position_id");
+
                 entity.Property(e => e.VolumeUl).HasColumnName("volume_ul");
+
+                entity.HasOne(d => d.ContainerType)
+                    .WithMany(p => p.Preps)
+                    .HasForeignKey(d => d.ContainerTypeId)
+                    .HasConstraintName("preps_container_type__fk");
 
                 entity.HasOne(d => d.PlantSample)
                     .WithMany(p => p.Preps)
@@ -389,6 +398,11 @@ namespace plantMaterials.Models
                     .HasForeignKey(d => d.PrepTypeId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("preps_type__fk");
+
+                entity.HasOne(d => d.ShelfPosition)
+                    .WithMany(p => p.Preps)
+                    .HasForeignKey(d => d.ShelfPositionId)
+                    .HasConstraintName("preps_shelf_position__fk");
             });
 
             modelBuilder.Entity<PrepType>(entity =>

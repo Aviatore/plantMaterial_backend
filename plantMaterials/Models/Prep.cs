@@ -19,10 +19,14 @@ namespace plantMaterials.Models
         public Guid? PrepLocationId { get; set; }
         public string PrepDescription { get; set; }
         public int? VolumeUl { get; set; }
+        public Guid? ShelfPositionId { get; set; }
+        public Guid? ContainerTypeId { get; set; }
 
+        public virtual ContainerType ContainerType { get; set; }
         public virtual PlantSample PlantSample { get; set; }
         public virtual Location PrepLocation { get; set; }
         public virtual PrepType PrepType { get; set; }
+        public virtual ShelfPosition ShelfPosition { get; set; }
         public virtual ICollection<Analysis> Analyses { get; set; }
     }
 }
