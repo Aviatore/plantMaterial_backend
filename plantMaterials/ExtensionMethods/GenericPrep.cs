@@ -26,6 +26,8 @@ namespace plantMaterials.ExtensionMethods
                     throw new Exception("Something went wrong while saving preps");
                 }
 
+                problemDetails.Detail = "Preps were saved successfully";
+                problemDetails.Status = 200;
                 return problemDetails;
             }
             catch (Exception e)
