@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using plantMaterials.DTOs;
 using plantMaterials.Models;
 using plantMaterials.Repositories;
@@ -48,7 +49,7 @@ namespace plantMaterials.ExtensionMethods
             }
         }
 
-        public static IEnumerable<PlantSample> GetPlantSample(this IGenericRepository<PlantSample> repo,
+        public static IEnumerable<PlantSampleDto> GetPlantSample(this IGenericRepository<PlantSample> repo,
             PlantSampleFiltersDto[] filters)
         {
             var plantSamples = repo.GetAll();
@@ -110,7 +111,30 @@ namespace plantMaterials.ExtensionMethods
                 }
             }
 
-            return plantSamples;
+            return plantSamples.Select(p => new PlantSampleDto()
+            {
+                PlantSampleId = p.PlantSampleId,
+                CollectionDate = p.CollectionDate,
+                SampleName = p.SampleName,
+                PopulationId = p.PopulationId,
+                PlantSampleDescription = p.PlantSampleDescription,
+                TissueId = p.TissueId,
+                LocationId = p.LocationId,
+                DuplicationId = p.DuplicationId,
+                PhenotypeId = p.PhenotypeId,
+                SampleWeight = p.SampleWeight,
+                ShelfPositionId = p.ShelfPositionId,
+                ContainerTypeId = p.ContainerTypeId,
+                PrepsLocation = p.Preps.Select(p => new PrepLocationDto()
+                {
+                    PrepTypeName = p.PrepType.PrepTypeName,
+                    LocationName = p.PrepLocation.LocationName,
+                    ShelfPositionName = p.ShelfPosition.ShelfPositionName,
+                    ContainerTypeName = p.ContainerType.ContainerTypeName,
+                    LocationTypeName = p.PrepLocation.LocationType.LocationTypeName,
+                    IsolationDate = p.IsolationDate
+                }).AsEnumerable()
+            });
         }
 
         public static async Task<ProblemDetails> UpdatePlantSamples(this IGenericRepository<PlantSample> repo, PlantSample[] plantSamples)

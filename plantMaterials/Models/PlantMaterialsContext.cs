@@ -361,6 +361,10 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.ContainerTypeId).HasColumnName("container_type_id");
 
+                entity.Property(e => e.IsolationDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("isolation_date");
+
                 entity.Property(e => e.PlantSampleId).HasColumnName("plant_sample_id");
 
                 entity.Property(e => e.PrepDescription).HasColumnName("prep_description");

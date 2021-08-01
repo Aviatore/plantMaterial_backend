@@ -21,6 +21,7 @@ namespace plantMaterials.Models
         public int? VolumeUl { get; set; }
         public Guid? ShelfPositionId { get; set; }
         public Guid? ContainerTypeId { get; set; }
+        public DateTime? IsolationDate { get; set; }
 
         public virtual ContainerType ContainerType { get; set; }
         public virtual PlantSample PlantSample { get; set; }
