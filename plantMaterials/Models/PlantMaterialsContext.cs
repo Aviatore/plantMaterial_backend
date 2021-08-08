@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace plantMaterials.Models
 {
-    public partial class PlantMaterialsContext : DbContext
+    public class PlantMaterialsContext : DbContext
     {
         public PlantMaterialsContext()
         {
@@ -361,6 +361,8 @@ namespace plantMaterials.Models
 
                 entity.Property(e => e.ContainerTypeId).HasColumnName("container_type_id");
 
+                entity.Property(e => e.DuplicationId).HasColumnName("duplication_id");
+
                 entity.Property(e => e.IsolationDate)
                     .HasColumnType("datetime")
                     .HasColumnName("isolation_date");
@@ -385,6 +387,11 @@ namespace plantMaterials.Models
                     .WithMany(p => p.Preps)
                     .HasForeignKey(d => d.ContainerTypeId)
                     .HasConstraintName("preps_container_type__fk");
+
+                entity.HasOne(d => d.Duplication)
+                    .WithMany(p => p.Preps)
+                    .HasForeignKey(d => d.DuplicationId)
+                    .HasConstraintName("preps_duplication__fk");
 
                 entity.HasOne(d => d.PlantSample)
                     .WithMany(p => p.Preps)
@@ -522,10 +529,6 @@ namespace plantMaterials.Models
                     .HasMaxLength(100)
                     .HasColumnName("tissue_name");
             });
-
-            OnModelCreatingPartial(modelBuilder);
         }
-
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

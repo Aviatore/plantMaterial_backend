@@ -10,11 +10,13 @@ namespace plantMaterials.Models
         public Duplication()
         {
             PlantSamples = new HashSet<PlantSample>();
+            Preps = new HashSet<Prep>();
         }
 
         public Guid DuplicationId { get; set; }
         public short? DuplicationName { get; set; }
 
         public virtual ICollection<PlantSample> PlantSamples { get; set; }
+        public virtual ICollection<Prep> Preps { get; set; }
     }
 }
